@@ -121,40 +121,38 @@ const handleSendMessage = async (message) => {
   }
 };
 
-  // 修改根容器的样式
-  return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
+function App() {
+  <ThemeProvider theme={theme}>
+    <CssBaseline />
+    <Box
+      sx={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #FFF5F8 0%, #FFE4EA 100%)',
+        pt: 2,
+        pb: 4
+      }}
+    >
       <Box
+        component="img"
+        src="/banner.gif"
+        alt="AI Life Coach"
         sx={{
-          minHeight: '100vh',
-          background: 'linear-gradient(135deg, #FFF5F8 0%, #FFE4EA 100%)',
-          pt: 2,
-          pb: 4
+          width: '100%',
+          height: 'auto',
+          maxHeight: '140px',
+          objectFit: 'cover',
+          mb: 3,
+          borderRadius: 0
         }}
-      >
-        <Box
-          component="img"
-          src="/banner.gif"  // 修改为 GIF 文件名
-          alt="AI Life Coach"
-          sx={{
-            width: '100%',
-            height: 'auto',
-            maxHeight: '140px',
-            objectFit: 'cover',
-            mb: 3,
-            borderRadius: 0  // 添加圆角效果
-          }}
+      />
+      <Container maxWidth="md">
+        <ChatInterface 
+          messages={messages} 
+          onSendMessage={handleSendMessage} 
         />
-        <Container maxWidth="md">
-          <ChatInterface 
-            messages={messages} 
-            onSendMessage={handleSendMessage} 
-          />
-        </Container>
-      </Box>
-    </ThemeProvider>
-  );
+      </Container>
+    </Box>
+  </ThemeProvider>
 }
 
 export default App;
