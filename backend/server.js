@@ -6,13 +6,12 @@ import userService from './services/userService.js';
 
 dotenv.config();
 
-// 替换原有的硬编码配置
+// 环境变量配置
 const API_KEY = process.env.DEEPSEEK_API_KEY;
 const API_URL = process.env.DEEPSEEK_API_URL;
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 
 const app = express();
-const port = process.env.PORT || 3001;  // 修改为 3001 端口
 
 // 配置CORS，允许特定来源访问
 app.use(cors({
@@ -30,10 +29,6 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: '服务器内部错误' });
 });
 
-// DeepSeek R1 API配置
-const API_KEY = '52755a88-238a-4adf-ace1-98f8f0f19261';
-const API_URL = 'https://ark.cn-beijing.volces.com/api/v3/chat/completions';
-
 // 系统提示词，定义AI助手的角色
 const SYSTEM_PROMPT = `你是一位专业的Life Coach，拥有丰富的个人成长和心理辅导经验。你的目标是：
 1. 通过倾听和提问，深入理解用户的困扰和需求
@@ -43,6 +38,11 @@ const SYSTEM_PROMPT = `你是一位专业的Life Coach，拥有丰富的个人�
 5. 在必要时给出适当的督促和提醒
 
 请记住：你的建议应该是实用的、循序渐进的，并且要考虑到用户的具体情况和接受能力。`;
+
+// DeepSeek R1 API配置
+// 删除这部分重复声明
+// const API_KEY = '52755a88-238a-4adf-ace1-98f8f0f19261';
+// const API_URL = 'https://ark.cn-beijing.volces.com/api/v3/chat/completions';
 
 // 创建新用户
 app.post('/users', async (req, res) => {
