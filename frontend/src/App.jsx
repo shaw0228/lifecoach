@@ -120,39 +120,46 @@ const handleSendMessage = async (message) => {
     console.error('发送消息失败:', error);
   }
 };
-
 function App() {
-  <ThemeProvider theme={theme}>
-    <CssBaseline />
-    <Box
-      sx={{
-        minHeight: '100vh',
-        background: 'linear-gradient(135deg, #FFF5F8 0%, #FFE4EA 100%)',
-        pt: 2,
-        pb: 4
-      }}
-    >
+  const [messages, setMessages] = useState([]);
+  const [eventSource, setEventSource] = useState(null);
+  const [userId, setUserId] = useState(null);
+
+  // ... 其他 state 和 effects ...
+
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
       <Box
-        component="img"
-        src="/banner.gif"
-        alt="AI Life Coach"
         sx={{
-          width: '100%',
-          height: 'auto',
-          maxHeight: '140px',
-          objectFit: 'cover',
-          mb: 3,
-          borderRadius: 0
+          minHeight: '100vh',
+          background: 'linear-gradient(135deg, #FFF5F8 0%, #FFE4EA 100%)',
+          pt: 2,
+          pb: 4
         }}
-      />
-      <Container maxWidth="md">
-        <ChatInterface 
-          messages={messages} 
-          onSendMessage={handleSendMessage} 
+      >
+        <Box
+          component="img"
+          src="/banner.gif"
+          alt="AI Life Coach"
+          sx={{
+            width: '100%',
+            height: 'auto',
+            maxHeight: '140px',
+            objectFit: 'cover',
+            mb: 3,
+            borderRadius: 0
+          }}
         />
-      </Container>
-    </Box>
-  </ThemeProvider>
+        <Container maxWidth="md">
+          <ChatInterface 
+            messages={messages} 
+            onSendMessage={handleSendMessage} 
+          />
+        </Container>
+      </Box>
+    </ThemeProvider>
+  );
 }
 
 export default App;
