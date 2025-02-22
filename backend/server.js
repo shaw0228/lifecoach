@@ -6,6 +6,11 @@ import userService from './services/userService.js';
 
 dotenv.config();
 
+// 替换原有的硬编码配置
+const API_KEY = process.env.DEEPSEEK_API_KEY;
+const API_URL = process.env.DEEPSEEK_API_URL;
+const port = process.env.PORT || 3000;
+
 const app = express();
 const port = process.env.PORT || 3001;  // 修改为 3001 端口
 
