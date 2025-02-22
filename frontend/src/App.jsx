@@ -54,78 +54,87 @@ const API_BASE_URL = process.env.NODE_ENV === 'production'
   : 'http://localhost:3001';  // 开发环境使用本地地址
 
 // 修改所有的 API 请求地址
-const handleSendMessage = async (message) => {
-  try {
-    if (eventSource) {
-      eventSource.close();
-      setEventSource(null);
-    }
-
-    const userMessage = { role: 'user', content: message, timestamp: Date.now() };
-    setMessages(prev => [...prev, userMessage]);
-
-    const newEventSource = new EventSource(`${API_BASE_URL}/chat?message=${encodeURIComponent(message)}`);
-    setEventSource(newEventSource);
-    let aiResponse = '';
-
-    newEventSource.onopen = () => {
-      console.log('SSE连接已建立');
-    };
-
-    newEventSource.onmessage = (event) => {
-      try {
-        if (event.data === 'heartbeat') return;
-
-        const data = JSON.parse(event.data);
-        
-        if (data.status === 'completed') {
-          // 保存对话记录
-          if (userId) {
-            fetch(`${API_BASE_URL}/users/${userId}/conversations`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ message, response: aiResponse })
-            }).catch(error => console.error('保存对话记录失败:', error));
-          }
-
-          newEventSource.close();
-          setEventSource(null);
-          return;
-        }
-
-        if (data.content) {
-          aiResponse += data.content;
-          setMessages(prev => {
-            const newMessages = [...prev];
-            const lastMessage = newMessages[newMessages.length - 1];
-            if (lastMessage.role === 'assistant') {
-              lastMessage.content = aiResponse;
-            } else {
-              newMessages.push({ role: 'assistant', content: aiResponse, timestamp: Date.now() });
-            }
-            return newMessages;
-          });
-        }
-      } catch (error) {
-        console.error('处理消息失败:', error);
-      }
-    };
-
-    newEventSource.onerror = (error) => {
-      console.error('SSE错误:', error);
-      newEventSource.close();
-      setEventSource(null);
-    };
-  } catch (error) {
-    console.error('发送消息失败:', error);
-  }
-};
 function App() {
   const [messages, setMessages] = useState([]);
   const [eventSource, setEventSource] = useState(null);
   const [userId, setUserId] = useState(null);
 
-  // ... 其他 state 和 effects ...
+  // 加载初始消息
+  useEffect(() => {
+    setMessages([{
+      role: 'assistant',
+      content: '你好！我是你的Life Coach AI助手。我可以帮助你解决生活中的困扰，提供个性化的建议。请告诉我你想聊些什么？',
+      timestamp: Date.now()
+    }]);
+  }, []);
+
+  // 将 handleSendMessage 移到组件内部
+  const handleSendMessage = async (message) => {
+    try {
+      if (eventSource) {
+        eventSource.close();
+        setEventSource(null);
+      }
+
+      const userMessage = { role: 'user', content: message, timestamp: Date.now() };
+      setMessages(prev => [...prev, userMessage]);
+
+      const newEventSource = new EventSource(`${API_BASE_URL}/chat?message=${encodeURIComponent(message)}`);
+      setEventSource(newEventSource);
+      let aiResponse = '';
+
+      newEventSource.onopen = () => {
+        console.log('SSE连接已建立');
+      };
+
+      newEventSource.onmessage = (event) => {
+        try {
+          if (event.data === 'heartbeat') return;
+
+          const data = JSON.parse(event.data);
+          
+          if (data.status === 'completed') {
+            // 保存对话记录
+            if (userId) {
+              fetch(`${API_BASE_URL}/users/${userId}/conversations`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message, response: aiResponse })
+              }).catch(error => console.error('保存对话记录失败:', error));
+            }
+
+            newEventSource.close();
+            setEventSource(null);
+            return;
+          }
+
+          if (data.content) {
+            aiResponse += data.content;
+            setMessages(prev => {
+              const newMessages = [...prev];
+              const lastMessage = newMessages[newMessages.length - 1];
+              if (lastMessage.role === 'assistant') {
+                lastMessage.content = aiResponse;
+              } else {
+                newMessages.push({ role: 'assistant', content: aiResponse, timestamp: Date.now() });
+              }
+              return newMessages;
+            });
+          }
+        } catch (error) {
+          console.error('处理消息失败:', error);
+        }
+      };
+
+      newEventSource.onerror = (error) => {
+        console.error('SSE错误:', error);
+        newEventSource.close();
+        setEventSource(null);
+      };
+    } catch (error) {
+      console.error('发送消息失败:', error);
+    }
+  };
 
   return (
     <ThemeProvider theme={theme}>
