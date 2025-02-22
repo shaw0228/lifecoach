@@ -13,14 +13,16 @@ const port = process.env.PORT || 3001;
 
 const app = express();
 
-// 配置CORS，允许特定来源访问
+// 更新 CORS 配置，支持生产和开发环境
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: process.env.NODE_ENV === 'production' 
+    ? ['https://your-domain.vercel.app'] // 替换为你的 Vercel 域名
+    : 'http://localhost:5173',
   methods: ['GET', 'POST'],
   credentials: true,
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  exposedHeaders: ['Content-Type', 'Connection', 'Cache-Control', 'Content-Encoding']
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
 app.use(express.json());
 
 // 添加全局错误处理中间件
