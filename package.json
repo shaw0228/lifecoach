@@ -1,9 +1,9 @@
 {
-  "name": "1.lifecoach",
+  "name": "lifecoach",
   "version": "1.0.0",
-  "description": "这是一个基于DeepSeek R1 API开发的个人成长辅导网站，通过AI对话为用户提供个性化的建议和指导。",
-  "main": "index.js",
+  "private": true,
   "scripts": {
-    "start": "node server.js"
+    "build": "cd frontend && npm install && npm run build",
+    "start": "node backend/server.js"
   }
 }
